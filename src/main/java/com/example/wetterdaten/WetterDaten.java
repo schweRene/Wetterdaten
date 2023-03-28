@@ -8,10 +8,10 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class HelloApplication extends Application {
+public class WetterDaten extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        Parent root = FXMLLoader.load(HelloApplication.class.getResource("hello-view.fxml"));
+        Parent root = FXMLLoader.load(WetterDaten.class.getResource("main-view.fxml"));
         Scene scene = new Scene(root);
         stage.setTitle("Wetterdaten!");
         stage.setScene(scene);

@@ -1,4 +1,31 @@
 .right-form{
     -fx-background-color: linear-gradient(to bottom right, #dd5d5d,#aa1c1c);
-    
+    -fx-border-color: #000;
+    -fx-border-width: .4px .4px .2px .4px;
+}
+
+.close{
+    -fx-background-color: transparent;
+    -fx-cursor: hand;
+}
+.close:hover{
+    -fx-background-color: #f6f2f2;
+}
+
+.textfield{
+    -fx-background-color: #fff;
+    -fx-background-radius: 5px;
+    -fx-border-color: #000;
+    -fx-border-width: 2px;
+    -fx-font-size: 13px;
+    -fx-font-family: "Arial";
+}
+.textfield:focussed{
+    -fx-background-color: #eee;
+    -fx-border-color: #000;
+    -fx-border-width: 1.4px;
+}
+.button{
+    -fx-background-color
+
 }

@@ -1,29 +1,32 @@
-package com.example.wetterdaten;
+package com.example.wetterstation;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.chart.BubbleChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.image.ImageView;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
+
+
+
 
 public class MainController {
     @FXML
     private Button berlinBtn;
 
-
+    @FXML
+    private TextField blnTxt;
 
     @FXML
     private Button closeBtn;
 
-
+    @FXML
+    private TextField fraTxt;
 
     @FXML
     private Button frankfurtBtn;
@@ -31,96 +34,119 @@ public class MainController {
     @FXML
     private Button hhBtn;
 
-
+    @FXML
+    private TextField hhTxt;
 
     @FXML
-    private BubbleChart<?, ?> incomeChart;
-
-
+    private TextField koTxt;
 
     @FXML
     private Button koelnBtn;
 
     @FXML
-    private AnchorPane leftForm;
-
-    @FXML
-    private AnchorPane mainForm;
-
-    @FXML
-    private TextField weatherTxt;
+    private TextField muTxt;
 
     @FXML
     private Button munichBtn;
 
     @FXML
-    private AnchorPane rightForm;
+    private ImageView sunImg;
 
-    public void close(){
-        System.exit(0);
-    }
+    @FXML
+    private ImageView thunderImg;
 
-
-    // API-Schlüssel für OpenWeatherMap
-    private static final String API_KEY = "your_api_key_here";
-
-    // URLs für API-Aufrufe
-    private static final String BASE_URL = "https://api.openweathermap.org/data/2.5/weather";
-    private static final String CITY_PARAM = "?q=";
-    private static final String API_KEY_PARAM = "&appid=" + API_KEY;
 
     public void berlin(ActionEvent event){
         String city = "Berlin";
-        String weatherData = getWeatherData(city);
-        weatherTxt.setText(weatherData);
+        String weatherdata = getWeatherData(city);
+        blnTxt.setText(weatherdata);
     }
 
     public void hamburg(ActionEvent event){
         String city = "Hamburg";
-        String weatherData = getWeatherData(city);
-        weatherTxt.setText(weatherData);
+        String weatherdata = getWeatherData(city);
+        hhTxt.setText(weatherdata);
     }
 
     public void muenchen(ActionEvent event){
         String city = "München";
-        String weatherData = getWeatherData(city);
-        weatherTxt.setText(weatherData);
+        String weatherdata = getWeatherData(city);
+        muTxt.setText(weatherdata);
     }
     public void koeln(ActionEvent event){
         String city = "Köln";
-        String weatherData = getWeatherData(city);
-        weatherTxt.setText(weatherData);
+        String weatherdata = getWeatherData(city);
+        koTxt.setText(weatherdata);
     }
     public void frankfurt(ActionEvent event){
         String city = "Frankfurt/Main";
-        String weatherData = getWeatherData(city);
-        weatherTxt.setText(weatherData);
+        String weatherdata = getWeatherData(city);
+        fraTxt.setText(weatherdata);
     }
 
     private String getWeatherData(String city){
         try {
-            URL url = new URL(BASE_URL + CITY_PARAM + city + API_KEY_PARAM );
+            String apiUrl = "https://dwd.api.bund.dev/api/v1/weather/report/" + city;
+            URL url = new URL(apiUrl);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
-
-            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            String inputLine;
-            StringBuffer reponse = new StringBuffer();
-
-            while((inputLine = in.readLine()) != null){
-                reponse.append(inputLine);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            StringBuilder response = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                response.append(line);
             }
-            in.close();
+            reader.close();
+            connection.disconnect();
 
-            return reponse.toString();
-        }catch (MalformedURLException e){
-            e.printStackTrace();
-        }catch (IOException e){
+            //Parsen der JSON-Antwort von der API
+            JSONObject jsonResponse = new JSONObject(response.toString());
+            JSONObject temperatureObject = jsonResponse.getJSONObject("temperatures");
+            double temperature = temperatureObject.getDouble("airTemperature");
+            double feelsLike = temperatureObject.getDouble(feelsLike);
+            double humidity = jsonResponse.getDouble("humidity");
+
+            //Anzeigen der Wetterdaten im entsprechendem Textfeld
+            switch (city){
+                case "Berlin":
+                    blnTxt.setText("Temperatur: " + temperature +
+                                " K\nGefühlte Temperatur: " + feelsLike +
+                                " K\n Luftfeuchtigkeit: " + humidity + "%");
+                    break;
+                case "Hamburg":
+                    hhTxt.setText("Temperatur: " + temperature +
+                            " K\nGefühlte Temperatur: " + feelsLike +
+                            " K\n Luftfeuchtigkeit: " + humidity + "%");
+                    break;
+                case "München":
+                    muTxt.setText("Temperatur: " + temperature +
+                            " K\nGefühlte Temperatur: " + feelsLike +
+                            " K\n Luftfeuchtigkeit: " + humidity + "%");
+                    break;
+                case "Köln":
+                    koTxt.setText("Temperatur: " + temperature +
+                            " K\nGefühlte Temperatur: " + feelsLike +
+                            " K\n Luftfeuchtigkeit: " + humidity + "%");
+                    break;
+                case "Frankfurt/Main":
+                    fraTxt.setText("Temperatur: " + temperature +
+                            " K\nGefühlte Temperatur: " + feelsLike +
+                            " K\n Luftfeuchtigkeit: " + humidity + "%");
+                    break;
+
+
+
+        }
+        }catch (IOException | JSONExeption e){                         //| JSONExeption e
             e.printStackTrace();
         }
 
-        return "";
+
     }
 
 
+
+    public void close(){
+        System.exit(0);
+    }
 }
